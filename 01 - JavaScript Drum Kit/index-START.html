@@ -9,6 +9,7 @@
 
 
   <div class="keys">
+    <!-- data-key number refers to which actual key in being hit -->
     <div data-key="65" class="key">
       <kbd>A</kbd>
       <span class="sound">clap</span>
@@ -58,6 +59,33 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  const playSound = function(event) {
+    const audio = document.querySelector(`audio[data-key="${event.keyCode}"]`)
+    // if not a key with a sound, do nothing
+    const key = document.querySelector(`.key[data-key="${event.keyCode}"]`)
+    if(!audio) {
+      return
+    }
+    // rewind to the start, lets keys be hit before sound is done playing
+    audio.currentTime = 0
+    // play the sound
+    audio.play()
+    // add playing class to key that is pushed
+    key.classList.add('playing')
+  }
+
+  const removeTransition = function(event) {
+    if (event.propertyName !== 'transform') {
+      return
+    }
+    this.classList.remove('playing')
+  }
+
+  const keys = document.querySelectorAll('.key')
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition))
+
+  // on 'keydown', playSound()
+  window.addEventListener('keydown', playSound)
 
 </script>
 
